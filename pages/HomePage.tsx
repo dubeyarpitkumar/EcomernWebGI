@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import ProductCard from '../components/ProductCard';
 import { Product } from '../types';
@@ -6,13 +5,21 @@ import { Product } from '../types';
 interface HomePageProps {
   products: Product[];
   onProductSelect: (product: Product) => void;
+  searchQuery: string;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ products, onProductSelect }) => {
+const HomePage: React.FC<HomePageProps> = ({ products, onProductSelect, searchQuery }) => {
   const [sortOption, setSortOption] = useState<string>('relevance');
 
-  const sortedProducts = useMemo(() => {
-    const sortableProducts = [...products];
+  const filteredAndSortedProducts = useMemo(() => {
+    const filtered = searchQuery
+      ? products.filter(product =>
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.brand.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : products;
+
+    const sortableProducts = [...filtered];
     switch (sortOption) {
       case 'price-asc':
         sortableProducts.sort((a, b) => a.price - b.price);
@@ -32,7 +39,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, onProductSelect }) => {
         break;
     }
     return sortableProducts;
-  }, [products, sortOption]);
+  }, [products, sortOption, searchQuery]);
 
 
   return (
@@ -69,11 +76,18 @@ const HomePage: React.FC<HomePageProps> = ({ products, onProductSelect }) => {
             </select>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {sortedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onSelect={onProductSelect} />
-          ))}
-        </div>
+        {filteredAndSortedProducts.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {filteredAndSortedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} onSelect={onProductSelect} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 bg-white rounded-lg shadow">
+              <h2 className="text-2xl font-bold text-gray-700">No Products Found</h2>
+              <p className="text-gray-500 mt-2">Try adjusting your search to find what you're looking for.</p>
+          </div>
+        )}
       </div>
     </div>
   );

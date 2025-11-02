@@ -10,11 +10,14 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import WishlistPage from './pages/WishlistPage';
 import { Product, Order, ShippingInfo } from './types';
 import { products } from './constants';
+import { useDebounce } from './hooks/useDebounce';
 
 const AppContent: React.FC = () => {
   const [currentView, setCurrentView] = useState<'home' | 'product' | 'checkout' | 'orderConfirmation' | 'wishlist'>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [orderDetails, setOrderDetails] = useState<Order | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { cartItems, clearCart } = useCart();
 
   const handleProductSelect = (product: Product) => {
@@ -25,6 +28,7 @@ const AppContent: React.FC = () => {
   const navigateHome = () => {
     setCurrentView('home');
     setSelectedProduct(null);
+    setSearchQuery('');
   };
   
   const handleNavigateToCheckout = () => {
@@ -65,9 +69,11 @@ const AppContent: React.FC = () => {
         onLogoClick={navigateHome} 
         onNavigateToCheckout={handleNavigateToCheckout}
         onNavigateToWishlist={handleNavigateToWishlist} 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <main className="flex-grow container mx-auto px-4 py-8">
-        {currentView === 'home' && <HomePage onProductSelect={handleProductSelect} products={products} />}
+        {currentView === 'home' && <HomePage onProductSelect={handleProductSelect} products={products} searchQuery={debouncedSearchQuery} />}
         {currentView === 'product' && selectedProduct && (
           <ProductDetailPage product={selectedProduct} onBack={navigateHome} />
         )}

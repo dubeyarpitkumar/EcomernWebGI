@@ -9,9 +9,11 @@ interface HeaderProps {
     onLogoClick: () => void;
     onNavigateToCheckout: () => void;
     onNavigateToWishlist: () => void;
+    searchQuery: string;
+    onSearchChange: (query: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLogoClick, onNavigateToCheckout, onNavigateToWishlist }) => {
+const Header: React.FC<HeaderProps> = ({ onLogoClick, onNavigateToCheckout, onNavigateToWishlist, searchQuery, onSearchChange }) => {
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -30,6 +32,8 @@ const Header: React.FC<HeaderProps> = ({ onLogoClick, onNavigateToCheckout, onNa
               type="text"
               placeholder="Search for products, brands and more"
               className="w-full px-4 py-2 text-black rounded-l-md focus:outline-none"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
             />
             <button className="bg-white text-flipkart-blue px-4 rounded-r-md">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
