@@ -40,7 +40,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
       </button>
 
       <div className="relative p-4">
-        <img src={product.images[0]} alt={product.name} className="w-full h-48 object-contain" />
+        <img 
+          src={product.images[0]} 
+          alt={product.name} 
+          className="w-full h-48 object-contain" 
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div className="p-4 border-t border-gray-200 flex flex-col flex-grow">
         <p className="text-gray-500 text-sm">{product.brand}</p>
